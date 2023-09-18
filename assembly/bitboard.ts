@@ -77,7 +77,8 @@ export function fromArray(array: boolean[]): Puyos {
   const puyos = emptyPuyos();
   for (let j = 0; j < NUM_SLICES; ++j) {
     for (let i = 0; i < WIDTH * SLICE_HEIGHT; ++i) {
-      if (array[i + j * WIDTH * SLICE_HEIGHT]) {
+      const index = i + j * WIDTH * SLICE_HEIGHT;
+      if (index < array.length && array[index]) {
         puyos[j] |= 1 << i;
       }
     }
@@ -104,7 +105,7 @@ export function singlePuyo(x: i32, y: i32): Puyos {
  * @param y Vertical coordinate. 0-indexed, top to bottom.
  * @returns A vertical line of puyos.
  */
-export function verticalLine(y: number): Puyos {
+export function verticalLine(y: i32): Puyos {
   const slice_y = y % SLICE_HEIGHT;
   y -= slice_y;
   const result = emptyPuyos();
@@ -112,7 +113,7 @@ export function verticalLine(y: number): Puyos {
   return result;
 }
 
-export function verticalShift(puyos: Puyos, deltaY: number): void {
+export function verticalShift(puyos: Puyos, deltaY: i32): void {
   if (deltaY > 0) {
     puyos[1] = ((puyos[1] << (deltaY * V_SHIFT)) & FULL) | puyos[0] >> ((SLICE_HEIGHT - deltaY) * V_SHIFT);
     puyos[0] = (puyos[0] << (deltaY * V_SHIFT)) & FULL;

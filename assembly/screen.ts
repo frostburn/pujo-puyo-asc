@@ -17,6 +17,7 @@ import {
   verticalShift,
   vanishTop,
 } from './bitboard';
+import { shuffle } from './util';
 
 /**
  * Result of advancing the screen one step.
@@ -79,9 +80,6 @@ function gridFromLines(lines: string[]): Puyos[] {
       for (let i = 0; i < WIDTH; ++i) {
         array.push(lines[k].charAt(i) === ASCII_PUYO.charAt(j));
       }
-    }
-    while (array.length < WIDTH * HEIGHT) {
-      array.push(false);
     }
     grid.push(fromArray(array));
   }
@@ -220,7 +218,7 @@ export class SimplePuyoScreen {
    * Commit garbage to the top of the screen.
    */
   bufferGarbage(amount: i32): void {
-    let y = 5;
+    let y = 4;
     while (amount) {
       // Create (up to) one line of garbage.
       if (amount >= WIDTH) {
@@ -232,9 +230,9 @@ export class SimplePuyoScreen {
         while (amount) {
           if (!this.garbageSlots.length) {
             this.garbageSlots = [0, 1, 2, 3, 4, 5];
-            this.garbageSlots.sort(() => Math.random() - 0.5); // Poor man's shuffle.
+            shuffle(this.garbageSlots);
           }
-          line[this.garbageSlots.pop()!] = true;
+          line[this.garbageSlots.pop()] = true;
           amount--;
         }
         const puyos = fromArray(line);
@@ -327,7 +325,9 @@ export class SimplePuyoScreen {
    */
   get mask(): Puyos {
     const result = emptyPuyos();
-    this.grid.forEach(puyos => merge(result, puyos));
+    for (let i = 0; i < this.grid.length; ++i) {
+      merge(result, this.grid[i]);
+    }
     return result;
   }
 
@@ -337,9 +337,12 @@ export class SimplePuyoScreen {
    */
   toSimpleScreen(): SimplePuyoScreen {
     const result = new SimplePuyoScreen();
-    result.grid = this.grid.map(clone);
+    result.grid = this.grid.map<Puyos>((puyos, _, __) => clone(puyos));
     result.chainNumber = this.chainNumber;
-    result.garbageSlots = [...this.garbageSlots];
+    result.garbageSlots = new Array<i32>(this.garbageSlots.length);
+    for (let i = 0; i < this.garbageSlots.length; ++i) {
+      result.garbageSlots[i] = this.garbageSlots[i];
+    }
     return result;
   }
 }

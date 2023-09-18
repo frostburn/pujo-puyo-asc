@@ -1,0 +1,32 @@
+{
+  "name": "pujo-puyo-asc",
+  "version": "0.0.1",
+  "description": "AI routines for Pujo Puyo in AssemblyScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests",
+    "asbuild:debug": "asc assembly/index.ts --target debug",
+    "asbuild:release": "asc assembly/index.ts --target release",
+    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "Puzzle",
+    "Game",
+    "Puyo",
+    "Puyo Puyo",
+    "Mean Bean Machine"
+  ],
+  "author": "Lumi Pakkanen",
+  "license": "MIT",
+  "devDependencies": {
+    "assemblyscript": "^0.27.9"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./build/release.js",
+      "types": "./build/release.d.ts"
+    }
+  }
+}

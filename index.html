@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script type="module">
+// import { add, hello } from "./build/release.js";
+import { add, hello } from "./build/debug.js";
+window.hello = hello;
+document.body.innerText = add(1, 2);
+</script>
+</head>
+<body></body>
+</html>
